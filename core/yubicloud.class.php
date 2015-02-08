@@ -479,11 +479,12 @@ class Yubicloud
                                             
                                             if (isset($response['t'])) {
                                                 $posZ=strrpos($response['t'], 'Z');
+                                                $responseTime = $response['t'];
                                                 if ($posZ > 0)
-                                                    $response['t'] = substr($response['t'], 0, $posZ);
+                                                    $responseTime = substr($response['t'], 0, $posZ);
                                                 $tzbackup = date_default_timezone_get();
                                                 date_default_timezone_set('UTC');
-                                                $response['t_utc'] = date_format(date_create($response['t']), "U");
+                                                $response['t_utc'] = date_format(date_create($responseTime), "U");
                                                 date_default_timezone_set($tzbackup);
                                             }
 
