@@ -177,6 +177,10 @@ function auth_prepare_password( $p_password ) {
  * @access public
  */
 function auth_attempt_login( $p_username, $p_password, $p_perm_login = false ) {
+	global $g_custom_auth;
+	if (isset($g_custom_auth)) {
+		$p_username = $g_custom_auth->getCanonicalName($p_username);
+	}
 	$t_user_id = user_get_id_by_name( $p_username );
 
 	$t_login_method = config_get( 'login_method' );
@@ -254,7 +258,11 @@ function auth_attempt_login( $p_username, $p_password, $p_perm_login = false ) {
  * @access public
  */
 function auth_attempt_script_login( $p_username, $p_password = null ) {
-	global $g_script_login_cookie, $g_cache_current_user_id;
+	global $g_script_login_cookie, $g_cache_current_user_id, $g_custom_auth;
+
+	if (isset($g_custom_auth)) {
+		$p_username = $g_custom_auth->getCanonicalName($p_username);
+	}
 
 	$t_user_id = user_get_id_by_name( $p_username );
 
@@ -357,7 +365,17 @@ function auth_get_password_max_size() {
  * @access public
  */
 function auth_does_password_match( $p_user_id, $p_test_password ) {
+	global $g_custom_auth;
 	$t_configured_login_method = config_get( 'login_method' );
+
+	if ( isset($g_custom_auth) ) {
+		$t_username = user_get_field( $p_user_id, 'username' );
+		if ( $g_custom_auth->authenticate( $t_username, $p_test_password ) ) {
+			return true;
+		} else if ($g_custom_auth->strict()) {
+			return false; // no fallback if login failed in strict mode
+		}
+	}
 
 	if( LDAP == $t_configured_login_method ) {
 		return ldap_authenticate( $p_user_id, $p_test_password );

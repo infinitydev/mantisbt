@@ -79,3 +79,10 @@ $g_return_path_email    = 'admin@example.com';	# the return address for bounced 
 
 # --- Others ---
 # $g_default_home_page = 'my_view_page.php';	# Set to name of page to go to after login
+
+# Custom authentication
+# set $g_custom_auth to an object implementing with the following methods
+# getCanonicalName($username) - returns a username that must exist in the mantis database
+# authenticate ($username, $password) - receives the canonical name and user-supplied password and returns true upon success login, false otherwise (=fallback to default mantis auth)
+# strict() - true if custom authenticator is mandatory, false if fallback to default mantis authentication is allowed
+# $g_custom_auth = new MyCustomAuth();
