@@ -42,7 +42,7 @@ class YubikeyAuth {
     }
 
     public function requireUsername($username) {
-        return true;
+        return false;
     }
 
     public function getCanonicalName ($username) {
